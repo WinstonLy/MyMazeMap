@@ -21,11 +21,13 @@ constexpr char s = 's';
 constexpr char a = 'a';
 constexpr char d = 'd';
 
+//******* 定义进入死胡同的返回值 *******//
+constexpr char f = 'f';
 //******* 创建迷宫类 *******//
 class CMazeMap
 {
 public:
-	CMazeMap(int _x, int _y);                      // 构造函数
+	CMazeMap();                      // 构造函数
 	~CMazeMap();                     // 析构函数
 	void SetWall(char _wall);        // 设置墙的字符
 	char GetWall();					 // 获取墙的字符
@@ -34,8 +36,9 @@ public:
 	void DefaultMap();               // 默认迷宫数组
 	void SetMap(int *mazeMap, int _col, int _row); // 自定义迷宫数组
 	void DrawMap();                  // 绘制迷宫
+	static void SetMazeArray(int _x, int _y);
 	static int Success(int _x, int _y);    // 找到迷宫出口函数
-	static int CheckNext(int _x, int _y, char _direction);  // 检测边界函数
+	static char CheckNext(int _x, int _y, char _direction);  // 检测边界函数
 
 private:
 	char m_cMazeWall;        // 墙的字符

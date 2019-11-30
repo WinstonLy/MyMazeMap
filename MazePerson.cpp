@@ -5,6 +5,8 @@
 
 using namespace std;
 
+int CMazePerson::count = -1;
+
 //******* 默认构造函数，初始化以初始化位置 *******//
 CMazePerson::CMazePerson():m_cPerson('T'),m_cDirection('W')
 {
@@ -38,6 +40,9 @@ void CMazePerson::SetCurrentPosition(int _x, int _y)
 {
 	m_iCurrentPositionX = _x;
 	m_iCurrentPositionY = _y;
+	Gotoxy(m_iCurrentPositionX, m_iCurrentPositionY);
+	cout << m_cPerson;
+	Sleep(1000);
 }
 
 //******* 设置前一位置的横、纵坐标 *******//
@@ -45,6 +50,15 @@ void CMazePerson::SetPreviousPosition(int _x, int _y)
 {
 	m_iPreviousPositionX = _x;
 	m_iPreviousPositionY = _y;
+	Gotoxy(0, 50);
+	cout << count;
+	Gotoxy(m_iCurrentPositionX, m_iCurrentPositionY);
+	count++;
+	if (count != 0)
+	{
+		cout << ' ';
+	}
+	Sleep(1000);
 }
 
 //******* 打印输出当前位置的坐标信息 *******//
@@ -62,67 +76,99 @@ void CMazePerson::GetPreviousPosition()
 //******* 控制移动，来寻找迷宫出口 *******//
 void CMazePerson::PersonMove()
 {
-	// char _direction;
+	int tempX = 0;
+	int tempY = 0;
+	char  tempDirection;
+
 	int successFlag = HI_FALSE;
 	while (!successFlag)
 	{
-		m_cDirection = getchar();
+		// 判断向哪个方向移动
+		tempDirection = m_cDirection;
+
+		m_cDirection = CMazeMap::CheckNext(m_iCurrentPositionX, m_iCurrentPositionY, m_cDirection);
 		if (m_iSpeed == NORMAL)
 		{
 			switch (m_cDirection)
 			{
 			// 向上移动
 			case w:
-				if (CMazeMap::CheckNext(m_iCurrentPositionX, m_iCurrentPositionY, m_cDirection))
+				if ((m_iCurrentPositionX != m_iPreviousPositionX + 1) &&(m_cDirection != f) )
 				{
-					m_iPreviousPositionX = m_iCurrentPositionX;
-					m_iPreviousPositionY = m_iCurrentPositionY;
-					m_iCurrentPositionX += 1;
-					m_iCurrentPositionY += 0;
+					SetPreviousPosition(m_iCurrentPositionX, m_iCurrentPositionY);
+					SetCurrentPosition(m_iCurrentPositionX - 1, m_iCurrentPositionY);
 				}
+				else
+					m_cDirection = '1';
 				break;
-			//向下移动
+			// 向下移动
 			case s:
-				if (CMazeMap::CheckNext(m_iCurrentPositionX, m_iCurrentPositionY, m_cDirection))
+				if ((m_iCurrentPositionX != m_iPreviousPositionX - 1) &&(m_cDirection != f))
 				{
-					m_iPreviousPositionX = m_iCurrentPositionX;
-					m_iPreviousPositionY = m_iCurrentPositionY;
-					m_iCurrentPositionX -= 1;
-					m_iCurrentPositionY += 0;
-				}
+					SetPreviousPosition(m_iCurrentPositionX, m_iCurrentPositionY);
+					SetCurrentPosition(m_iCurrentPositionX + 1, m_iCurrentPositionY);
+				}	
+				else
+					m_cDirection = '2';
 				break;
+			// 向左移动
 			case a:
-				if (CMazeMap::CheckNext(m_iCurrentPositionX, m_iCurrentPositionY, m_cDirection))
+				if ((m_iCurrentPositionY != m_iPreviousPositionY + 1) && (m_cDirection != f))
 				{
-					m_iPreviousPositionX = m_iCurrentPositionX;
-					m_iPreviousPositionY = m_iCurrentPositionY;
-					m_iCurrentPositionX += 0;
-					m_iCurrentPositionY -= 1;
+					SetPreviousPosition(m_iCurrentPositionX, m_iCurrentPositionY);
+					SetCurrentPosition(m_iCurrentPositionX, m_iCurrentPositionY - 1);
+					
 				}
+				else
+					m_cDirection = '3';
 				break;
+			// 向右移动
 			case d:
-				if (CMazeMap::CheckNext(m_iCurrentPositionX, m_iCurrentPositionY, m_cDirection))
+				if ((m_iCurrentPositionY != m_iPreviousPositionY - 1) &&(m_cDirection != f))
 				{
-					m_iPreviousPositionX = m_iCurrentPositionX;
-					m_iPreviousPositionY = m_iCurrentPositionY;
-					m_iCurrentPositionX += 0;
-					m_iCurrentPositionY += 1;
+					SetPreviousPosition(m_iCurrentPositionX, m_iCurrentPositionY);
+					SetCurrentPosition(m_iCurrentPositionX, m_iCurrentPositionY + 1);
 				}
+				else
+					m_cDirection = '4';
 				break;
+			case f:
+				tempX = m_iPreviousPositionX;
+				tempY = m_iPreviousPositionY;
+				SetPreviousPosition(m_iCurrentPositionX, m_iCurrentPositionY);
+				CMazeMap::SetMazeArray(m_iPreviousPositionX, m_iPreviousPositionY);
+				SetCurrentPosition(tempX, tempY);
+				if (tempDirection == w)
+					m_cDirection = '1';
+				if (tempDirection == s)
+					m_cDirection = '2';
+				if (tempDirection == a)
+					m_cDirection = '3';
+				if (tempDirection == d)
+					m_cDirection = '4';
+				//m_cDirection = f;
+				break;
+			//输入有误
 			default:
 				cout << "input error" << endl;
 				break;
 			}
-			successFlag = CMazeMap::Success(m_iCurrentPositionX, m_iCurrentPositionY);
 		}
-		cout << "Success, you go out maze!" << endl;
+		// 判断是否找到出口
+		successFlag = CMazeMap::Success(m_iCurrentPositionX, m_iCurrentPositionY);
+		if (successFlag)
+		{
+			Gotoxy(2, 50);
+			cout << "Success, you go out maze!" << endl;
+		}
 	}
 }
 
-void CMazePerson::Gotoxy()
+//******* 控制光标在控制台的显示位置 *******//
+void CMazePerson::Gotoxy(int _x, int _y)
 {
 	COORD cd;
-	cd.X = m_iCurrentPositionX;
-	cd.Y = m_iCurrentPositionY;
+	cd.X = _y;
+	cd.Y = _x;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cd);
 };

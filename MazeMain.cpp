@@ -16,13 +16,13 @@ int main()
 		{WALL, WALL, WALL, WALL, WALL, WALL, WALL, ROAD, ROAD, ROAD, ROAD, ROAD, ROAD, ROAD, ROAD, WALL},
 		{WALL, WALL, WALL, WALL, WALL, WALL, ROAD, ROAD, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL},
 		{WALL, WALL, WALL, WALL, WALL, WALL, ROAD, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL},
-		{WALL, WALL, ROAD, ROAD, ROAD, WALL, ROAD, ROAD, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL},
+		{WALL, WALL, ROAD, ROAD, ROAD, WALL, ROAD, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL},
 		{WALL, WALL, ROAD, WALL, ROAD, ROAD, ROAD, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL},
-		{WALL, ROAD, ROAD, WALL, WALL, ROAD, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL},
+		{WALL, ROAD, ROAD, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL},
 		{WALL, ROAD, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL}
 	};
 
-	CMazeMap maze(8,16);
+	CMazeMap maze;
 	//cout << maze.GetWall() << " " << maze.GetRoad() << endl;
 	//maze.DefaultMap();
 	maze.SetWall('#');
@@ -32,10 +32,10 @@ int main()
 
 	CMazePerson mazer;
 	mazer.SetPersonAttr('T', 'w', NORMAL);
-	mazer.SetCurrentPosition(7, 2);
-	mazer.SetPreviousPosition(7, 2);
+	mazer.SetCurrentPosition(7, 1);
+	mazer.SetPreviousPosition(7, 1);
 	mazer.PersonMove();
-	mazer.Gotoxy();
+	
 
 
 	system("pause");

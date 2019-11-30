@@ -11,7 +11,7 @@ int CMazeMap::m_iMazeRow = g_iScreenWidth;
 int CMazeMap::m_iMazeMapArray[g_iScreenHeight][g_iScreenWidth] = { 0 };
 
 //******* 构造函数，初始化各个参数，主要用来绘制默认地图 *******//
-CMazeMap::CMazeMap(int _x, int _y):m_cMazeWall('#'), m_cMazeRoad(' ')
+CMazeMap::CMazeMap():m_cMazeWall('#'), m_cMazeRoad(' ')
 {
 	//m_iMazeCol = _x;    //迷宫行数，高度
 	//m_iMazeRow = _y;   //迷宫列数，宽度
@@ -84,6 +84,12 @@ void CMazeMap::SetMap(int *mazeMap, int _col, int _row)
 	}
 }
 
+//******* 当找到死胡同时将mazemap中该处的值设为WALL *******//
+void CMazeMap::SetMazeArray(int _x, int _y)
+{
+	m_iMazeMapArray[_x][_y] = WALL;
+}
+
 //******* 根据传入的迷宫数组，用cout的方式画出迷宫 *******//
 void CMazeMap::DrawMap()
 {
@@ -110,38 +116,18 @@ void CMazeMap::DrawMap()
 }
 
 //****** 根据四个不同的移动方向检查下一个位置是否是通路 *******//
-int CMazeMap::CheckNext(int _x, int _y, char _direction)
+char CMazeMap::CheckNext(int _x, int _y, char _direction)
 {
-	switch (_direction)
-	{
-	case w:
-		if (CMazeMap::m_iMazeMapArray[_x + 1][_y] == ROAD && (_x + 1 < CMazeMap::m_iMazeCol))
-			return HI_TRUE;
-		else
-			return HI_FALSE;
-		break;
-	case s:
-		if (CMazeMap::m_iMazeMapArray[_x - 1][_y] == ROAD && (_x - 1 >= 0))
-			return HI_TRUE;
-		else
-			return HI_FALSE;
-		break;
-	case a:
-		if (CMazeMap::m_iMazeMapArray[_x][_y - 1] == ROAD && (_y - 1) >= 0)
-			return HI_TRUE;
-		else
-			return HI_FALSE;
-		break;
-	case d:
-		if (CMazeMap::m_iMazeMapArray[_x][_y + 1] == ROAD && (_y + 1 < CMazeMap::m_iMazeRow))
-			return HI_TRUE;
-		else
-			return HI_FALSE;
-		break;
-	default:
-		cout << "mazeArray error" << endl;
-		return HI_FALSE;
-	}
+	if (m_iMazeMapArray[_x - 1][_y] == ROAD && (_x - 1 >= 0) &&(_direction != '1'))
+		return w;
+	if (m_iMazeMapArray[_x + 1][_y] == ROAD && (_x + 1 < m_iMazeCol) && (_direction != '2' ))
+		return s;
+	if (m_iMazeMapArray[_x][_y - 1] == ROAD && (_y - 1 >= 0) && (_direction != '3'))
+		return a;
+	if (m_iMazeMapArray[_x][_y + 1] == ROAD && (_y + 1 < m_iMazeRow) && (_direction != '4'))
+		return d;
+	
+	return f;
 }
 
 
